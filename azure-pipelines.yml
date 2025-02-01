@@ -100,7 +100,7 @@ stages:
             inputs:
               targetType: 'filePath'
               filePath: '$(Build.SourcesDirectory)/scripts/Deploy-WebApp.ps1'
-              arguments: '-appName $(WebAppNameDev) -environment "Dev" -resourceGroup $(ResourceGroup) -azureSubscription $azureSubscription -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
+              arguments: '-appName $(WebAppNameDev) -environment "Dev" -resourceGroup $(ResourceGroup) -azureSubscription "Azure subscription 1" -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
               pwsh: true
 
 # Deploy to Test
@@ -125,7 +125,7 @@ stages:
             inputs:
               targetType: 'filePath'
               filePath: '$(Build.SourcesDirectory)/scripts/Deploy-WebApp.ps1'
-              arguments: '-appName $(WebAppNameTest) -environment "Test" -resourceGroup $(ResourceGroup) -azureSubscription $azureSubscription -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
+              arguments: '-appName $(WebAppNameTest) -environment "Test" -resourceGroup $(ResourceGroup) -azureSubscription "Azure subscription 1" -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
               pwsh: true
 
 # Deploy to Staging
@@ -149,5 +149,5 @@ stages:
             displayName: 'Deploy to Staging Environment'
             inputs:
               filePath: '$(Build.SourcesDirectory)/scripts/Deploy-WebApp.ps1'
-              arguments: '-appName $(WebAppNameStaging) -environment "Staging" -resourceGroup $(ResourceGroup) -azureSubscription $azureSubscription -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
+              arguments: '-appName $(WebAppNameStaging) -environment "Staging" -resourceGroup $(ResourceGroup) -azureSubscription "Azure subscription 1" -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
               pwsh: true
