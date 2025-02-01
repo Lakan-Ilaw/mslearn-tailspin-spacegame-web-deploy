@@ -1,5 +1,5 @@
-trigger:
-- '*'
+trigger: none
+#- '*'
 
 variables:
   buildConfiguration: 'Release'
@@ -110,7 +110,8 @@ stages:
           - task: PowerShell@2
             displayName: 'Deploy to Test Environment'
             inputs:
-              filePath: 'scripts\Deploy-WebApp.ps1'
+              targetType: 'filePath'
+              filePath: 'scripts/Deploy-WebApp.ps1'
               arguments: '-appName $(WebAppNameTest) -environment "Test" -resourceGroup $(ResourceGroupTest) -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
               pwsh: true
 
