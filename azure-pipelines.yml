@@ -81,6 +81,17 @@ stages:
       runOnce:
         deploy:
           steps:
+          - checkout: self # Essential: Checks out your repository
+          - script: |
+              echo "Current Directory:"
+              pwd  # Print the current working directory
+              echo "Repository Root (should be /home/vsts/work/1/s on Linux agents):"
+              echo "$(System.DefaultWorkingDirectory)" # Or $env:System_DefaultWorkingDirectory in PowerShell
+              echo "Contents of the 'scripts' directory:"
+              ls -l scripts  # List files in the 'scripts' directory (Linux)
+              echo "Contents of the repository root:"
+              ls -lR  # List all files and directories recursively from the root (Linux)
+            displayName: 'Check File Paths'
           - download: current
             artifact: drop
           - task: PowerShell@2

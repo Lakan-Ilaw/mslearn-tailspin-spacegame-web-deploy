@@ -6,7 +6,7 @@ param (
 )
 
 # Function to Deploy Web App
-function Deploy-WebApp {
+function Start-WebApp {
     param (
         [string]$appName,
         [string]$environment,
@@ -60,4 +60,4 @@ function Deploy-WebApp {
 }
 
 # Execute the deployment
-Deploy-WebApp -appName $appName -environment $environment -resourceGroup $resourceGroup -artifactPath $artifactPath
+Start-WebApp -appName $appName -environment $environment -resourceGroup $resourceGroup -artifactPath $artifactPath
