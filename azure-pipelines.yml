@@ -86,7 +86,7 @@ stages:
           - task: PowerShell@2
             displayName: 'Deploy to Dev Environment'
             inputs:
-              filePath: 'scripts/Deploy-WebApp.ps1'
+              filePath: 'scripts\Deploy-WebApp.ps1'
               arguments: '-appName $(WebAppNameDev) -environment "Dev" -resourceGroup $(ResourceGroupDev) -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
               pwsh: true
 
@@ -110,7 +110,7 @@ stages:
           - task: PowerShell@2
             displayName: 'Deploy to Test Environment'
             inputs:
-              filePath: 'scripts/Deploy-WebApp.ps1'
+              filePath: 'scripts\Deploy-WebApp.ps1'
               arguments: '-appName $(WebAppNameTest) -environment "Test" -resourceGroup $(ResourceGroupTest) -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
               pwsh: true
 
@@ -134,6 +134,6 @@ stages:
           - task: PowerShell@2
             displayName: 'Deploy to Staging Environment'
             inputs:
-              filePath: 'scripts/Deploy-WebApp.ps1'
+              filePath: 'scripts\Deploy-WebApp.ps1'
               arguments: '-appName $(WebAppNameStaging) -environment "Staging" -resourceGroup $(ResourceGroupStaging) -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
               pwsh: true
