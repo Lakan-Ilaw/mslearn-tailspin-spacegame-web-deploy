@@ -4,7 +4,6 @@ trigger:
 variables:
   buildConfiguration: 'Release'
   releaseBranchName: 'PS_build'
-  azureSubscription: 'Resource Manager - Tailspin - Space Game'
 
 stages:
 - stage: 'Build'
