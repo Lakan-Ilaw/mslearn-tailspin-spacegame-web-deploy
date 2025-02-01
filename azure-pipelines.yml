@@ -100,7 +100,7 @@ stages:
             inputs:
               targetType: 'filePath'
               filePath: '$(Build.SourcesDirectory)/scripts/Deploy-WebApp.ps1'
-              arguments: '-appName $(WebAppNameDev) -environment "Dev" -resourceGroup $(ResourceGroup) -azureSubscription "Azure subscription 1" -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
+              arguments: '-appName $(WebAppNameDev) -environment "Dev" -resourceGroup $(ResourcseGroup) -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
               pwsh: true
 
 # Deploy to Test

@@ -2,8 +2,7 @@ param (
     [string]$appName,
     [string]$environment,
     [string]$resourceGroup,
-    [string]$artifactPath,
-    [string]$azureSubscription
+    [string]$artifactPath
 )
 
 # Function to Deploy Web App
@@ -12,45 +11,53 @@ function Start-WebApp {
         [string]$appName,
         [string]$environment,
         [string]$resourceGroup,
-        [string]$artifactPath,
-        [string]$azureSubscription
+        [string]$artifactPath
     )
 
-    Write-Output "📦 Starting deployment to $environment environment..."
+    try {
+        Write-Output "==========================================="
+        Write-Output "Starting deployment to $environment environment..."
+        Write-Output "==========================================="
 
-    # Authenticate with Azure
-    Write-Output "🔐 Authenticating with Azure Subscription: $azureSubscription"
-    az account set --subscription "$azureSubscription"
+        # Validate Parameters
+        if (-not $appName -or -not $resourceGroup -or -not $artifactPath) {
+            Write-Error "Missing required parameters."
+            exit 1
+        }
 
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "❌ Failed to authenticate with Azure."
-        exit 1
+        # Ensure the Azure CLI is authenticated
+        Write-Output "Checking Azure CLI authentication..."
+        az account show | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Azure CLI is not authenticated. Please login using 'az login'."
+            exit 1
+        }
+
+        # Ensure artifact exists
+        if (-Not (Test-Path $artifactPath)) {
+            Write-Error "Artifact path does not exist: $artifactPath"
+            exit 1
+        }
+
+        # Deploy to Azure Web App
+        Write-Output "Deploying to Azure Web App: $appName"
+        az webapp deployment source config-zip `
+            --resource-group $resourceGroup `
+            --name $appName `
+            --src $artifactPath
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Output "✅ Deployment to $environment completed successfully!"
+        } else {
+            Write-Error "❌ Deployment to $environment failed."
+            exit 1
+        }
     }
-
-    # Check if artifact exists
-    if (-Not (Test-Path $artifactPath)) {
-        Write-Error "❌ Artifact not found at $artifactPath"
-        exit 1
-    }
-
-    Write-Output "✅ Artifact found: $artifactPath"
-
-    # Deploy to Azure Web App
-    Write-Output "🚀 Deploying to $appName in $resourceGroup..."
-    az webapp deployment source config-zip --resource-group "$resourceGroup" `
-        --name "$appName" --src "$artifactPath"
-
-    if ($LASTEXITCODE -eq 0) {
-        Write-Output "✅ Deployment to $environment completed successfully!"
-    } else {
-        Write-Error "❌ Deployment failed!"
+    catch {
+        Write-Error "An error occurred: $_"
         exit 1
     }
 }
 
-# Call the function with parameters
-Start-WebApp -appName $appName `
-              -environment $environment `
-              -resourceGroup $resourceGroup `
-              -artifactPath $artifactPath `
-              -azureSubscription $azureSubscription
+# Execute the deployment
+Start-WebApp -appName $appName -environment $environment -resourceGroup $resourceGroup -artifactPath $artifactPath
