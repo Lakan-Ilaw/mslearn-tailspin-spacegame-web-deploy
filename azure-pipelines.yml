@@ -1,17 +1,9 @@
 trigger:
-- '*'
+- PS_build
 
 variables:
   buildConfiguration: 'Release'
-  releaseBranchName: 'release'
-
-schedules:
-- cron: '0 3 * * *'
-  displayName: 'Deploy every day at 3 A.M.'
-  branches:
-    include:
-    - release
-  always: false 
+  releaseBranchName: 'PS_build'
 
 stages:
 - stage: 'Build'
@@ -74,19 +66,14 @@ stages:
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: drop
 
+# Deploy to Dev
 - stage: 'Dev'
   displayName: 'Deploy to the dev environment'
   dependsOn: Build
-  condition: |
-    and
-    (
-      succeeded(),
-      eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
-    )
   jobs:
   - deployment: Deploy
     pool:
-      vmImage: 'ubuntu-20.04'
+      vmImage: 'windows-latest'
     environment: dev
     variables:
     - group: Release
@@ -96,21 +83,21 @@ stages:
           steps:
           - download: current
             artifact: drop
-          - task: AzureWebApp@1
-            displayName: 'Azure App Service Deploy: website'
+          - task: PowerShell@2
+            displayName: 'Deploy to Dev Environment'
             inputs:
-              azureSubscription: 'Resource Manager - Tailspin - Space Game'
-              appName: '$(WebAppNameDev)'
-              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
+              filePath: 'scripts/Deploy-WebApp.ps1'
+              arguments: '-appName $(WebAppNameDev) -environment "Dev" -resourceGroup $(ResourceGroupDev) -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
+              pwsh: true
 
+# Deploy to Test
 - stage: 'Test'
   displayName: 'Deploy to the test environment'
   dependsOn: Dev
-  #condition: eq(variables['Build.Reason'], 'Schedule')
   jobs:
   - deployment: Deploy
     pool:
-      vmImage: 'ubuntu-20.04'
+      vmImage: 'windows-latest'
     environment: test
     variables:
     - group: 'Release'
@@ -120,20 +107,21 @@ stages:
           steps:
           - download: current
             artifact: drop
-          - task: AzureWebApp@1
-            displayName: 'Azure App Service Deploy: website'
+          - task: PowerShell@2
+            displayName: 'Deploy to Test Environment'
             inputs:
-              azureSubscription: 'Resource Manager - Tailspin - Space Game'
-              appName: '$(WebAppNameTest)'
-              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
+              filePath: 'scripts/Deploy-WebApp.ps1'
+              arguments: '-appName $(WebAppNameTest) -environment "Test" -resourceGroup $(ResourceGroupTest) -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
+              pwsh: true
 
+# Deploy to Staging
 - stage: 'Staging'
   displayName: 'Deploy to the staging environment'
   dependsOn: Test
   jobs:
   - deployment: Deploy
     pool:
-      vmImage: 'ubuntu-20.04'
+      vmImage: 'windows-latest'
     environment: staging
     variables:
     - group: 'Release'
@@ -143,9 +131,9 @@ stages:
           steps:
           - download: current
             artifact: drop
-          - task: AzureWebApp@1
-            displayName: 'Azure App Service Deploy: website'
+          - task: PowerShell@2
+            displayName: 'Deploy to Staging Environment'
             inputs:
-              azureSubscription: 'Resource Manager - Tailspin - Space Game'
-              appName: '$(WebAppNameStaging)'
-              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
+              filePath: 'scripts/Deploy-WebApp.ps1'
+              arguments: '-appName $(WebAppNameStaging) -environment "Staging" -resourceGroup $(ResourceGroupStaging) -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
+              pwsh: true
