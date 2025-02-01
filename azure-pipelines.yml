@@ -86,7 +86,8 @@ stages:
           - task: PowerShell@2
             displayName: 'Deploy to Dev Environment'
             inputs:
-              filePath: 'scripts\Deploy-WebApp.ps1'
+              targetType: 'filePath'
+              filePath: 'scripts/Deploy-WebApp.ps1'
               arguments: '-appName $(WebAppNameDev) -environment "Dev" -resourceGroup $(ResourceGroupDev) -artifactPath "$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip"'
               pwsh: true
 
