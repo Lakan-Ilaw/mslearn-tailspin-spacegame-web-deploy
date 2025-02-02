@@ -100,6 +100,10 @@ stages:
             inputs:
               azureSubscription: 'Resource Manager - Tailspin - Space Game'
               appName: '$(WebAppNameDev)'
+              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
+          - download: current
+            artifact: drop
+            displayName: Getting Artifact
           - task: PowerShell@2
             displayName: 'Deploy to Dev Environment'
             inputs:
