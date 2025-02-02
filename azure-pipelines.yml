@@ -95,6 +95,11 @@ stages:
             displayName: 'Check File Paths'
           - download: current
             artifact: drop
+          - task: AzureWebApp@1
+            displayName: 'Azure App Service Deploy: website'
+            inputs:
+              azureSubscription: 'Resource Manager - Tailspin - Space Game'
+              appName: '$(WebAppNameDev)'
           - task: PowerShell@2
             displayName: 'Deploy to Dev Environment'
             inputs:
@@ -120,6 +125,10 @@ stages:
           steps:
           - download: current
             artifact: drop
+          - task: AzureWebApp@1
+            displayName: 'Azure App Service Deploy: website'
+            inputs:
+              azureSubscription: 'Resource Manager - Tailspin - Space Game'
           - task: PowerShell@2
             displayName: 'Deploy to Test Environment'
             inputs:
